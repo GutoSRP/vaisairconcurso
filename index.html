@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radar de Editais</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday, a weather-report for exams: confident, warm, quick to scan
+   IDEA a thermometer and the paper of a concurso (edital, gabarito, lápis, calendário) floating in a night studio
+   PICTURE a big glass thermometer in 3D whose mercury follows the page, surrounded by floating paper objects
+   COLOUR fixed brand night #0b111c, navy #0e2a47, orange #ff6b1a, off-white #f5f3ee, six-step heat scale
+   TYPE Archivo Black display + Inter text
+   LAYOUT laptop: title left, thermometer scene right, scale strip under; then sticky gauge beside the lanes. Phone: title, scene, strip, lanes */
+:root{color-scheme:dark;--bg:#0b111c;--sf:#121826;--sf2:#172033;--mar:#0e2a47;--ink:#f5f3ee;--mute:#a9b6c6;--line:#24304a;--lar:#ff6b1a;
+--c0:#3d8bfd;--c1:#2ec4b6;--c2:#ffc93c;--c3:#ff8a3d;--c4:#ff3d57;--c5:#8b0a1f;--disp:"Archivo Black",Impact,system-ui,sans-serif}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+a{color:inherit}
+.band{padding-block:clamp(28px,4vw,64px);padding-inline:max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+h1,h2,h3{font-family:var(--disp);font-weight:400;letter-spacing:-.02em;line-height:1.05;margin:0;text-wrap:balance}
+/* topo */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:16px;padding:10px max(5vw,16px);flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700}
+.logo svg{width:38px;height:38px}
+.top nav{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.top nav a{text-decoration:none;color:var(--mute);padding:10px 12px;border-radius:10px;font-weight:600;font-size:15px}
+.top nav a:hover,.top nav a:focus-visible{color:var(--ink);background:var(--sf2);outline:none}
+/* abertura */
+.hero{position:relative;overflow:hidden;background:radial-gradient(60% 70% at 78% 40%,#3a1420 0,transparent 70%),radial-gradient(50% 60% at 10% 90%,#0e2a47 0,transparent 70%),var(--bg)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(20px,4vw,56px);align-items:center}
+.hero h1{font-size:clamp(36px,5.2vw,64px)}
+.hero h1 b{color:var(--lar);font-weight:400}
+.sub{color:var(--mute);font-size:17px;max-width:34em;margin:18px 0 26px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 20px;border-radius:999px;font-weight:700;text-decoration:none;border:2px solid var(--lar);transition:transform .2s}
+.btn.f{background:var(--lar);color:#121826}
+.btn:hover,.btn:focus-visible{transform:translateY(-2px);outline:none}
+.hot{margin-top:28px;display:flex;gap:14px;align-items:center;background:var(--sf);border:1px solid var(--line);border-radius:16px;padding:14px 16px;max-width:30em}
+.hot .n{font-family:var(--disp);font-size:40px;line-height:1;color:var(--c4)}
+.hot small{display:block;color:var(--mute)}
+/* cena 3D */
+.scene{position:relative;height:min(560px,62vw);min-height:380px;perspective:1100px}
+.stage{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .25s ease-out}
+.obj{position:absolute;transform-style:preserve-3d;will-change:transform}
+.obj .face{position:absolute;inset:0;border-radius:10px;backface-visibility:hidden}
+.paper .face{background:linear-gradient(160deg,#fffdf7,#e9e4d8);box-shadow:0 30px 40px -20px #0009}
+.paper .edge{position:absolute;inset:0;border-radius:10px;background:#cfc8b8;transform:translateZ(-6px)}
+.paper svg{position:absolute;inset:0;width:100%;height:100%}
+.termo3d{position:absolute;left:50%;top:50%;width:150px;height:440px;transform:translate(-50%,-52%) translateZ(60px);filter:drop-shadow(0 40px 40px #000a)}
+.termo3d svg{width:100%;height:100%;overflow:visible}
+@keyframes boia{0%,100%{translate:0 0}50%{translate:0 -14px}}
+.b1{animation:boia 6s ease-in-out infinite}.b2{animation:boia 7.5s ease-in-out -2s infinite}.b3{animation:boia 6.8s ease-in-out -4s infinite}.b4{animation:boia 8s ease-in-out -1s infinite}
+/* faixas */
+.strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:clamp(24px,4vw,40px)}
+.strip button{all:unset;cursor:pointer;border-radius:14px;padding:12px 14px;min-height:76px;background:color-mix(in srgb,var(--c) 18%,var(--sf));border:2px solid color-mix(in srgb,var(--c) 55%,transparent);transition:transform .2s,background .2s}
+.strip button:hover,.strip button:focus-visible{transform:translateY(-3px)}
+.strip button[aria-pressed=true]{background:var(--c);color:#121826}
+.strip b{display:block;font-family:var(--disp);font-size:clamp(24px,3vw,34px);line-height:1}
+.strip span{font-size:14px;font-weight:600}
+/* barra de busca */
+.ctl{position:sticky;top:59px;z-index:15;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(8px);border-block:1px solid var(--line)}
+.ctl .wrap{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:10px max(5vw,16px)}
+#q{flex:1 1 220px;min-height:46px;font:16px Inter,sans-serif;color:var(--ink);background:var(--sf);border:1px solid var(--line);border-radius:12px;padding:0 14px}
+#q:focus{outline:2px solid var(--lar);outline-offset:1px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--sf);color:var(--ink);font:600 14px Inter,sans-serif;cursor:pointer}
+.chips button[aria-pressed=true]{background:var(--ink);color:#121826;border-color:var(--ink)}
+.chips button:focus-visible{outline:2px solid var(--lar)}
+/* corpo */
+.main{display:grid;grid-template-columns:140px minmax(0,1fr);gap:clamp(16px,3vw,40px);align-items:start}
+.gauge{position:sticky;top:150px;height:min(560px,calc(100svh - 190px))}
+.gauge .tube{position:absolute;left:30px;top:0;bottom:60px;width:34px;border-radius:20px;background:linear-gradient(90deg,#d9dde3,#fff 40%,#b9c0ca);box-shadow:inset 0 0 0 4px #fff3}
+.gauge .hg{position:absolute;left:39px;bottom:60px;width:16px;border-radius:10px;background:linear-gradient(90deg,#c21d38,#ff5a6e 50%,#c21d38);transition:height .8s cubic-bezier(.3,1.4,.5,1),background .5s}
+.gauge .bulb{position:absolute;left:16px;bottom:0;width:62px;height:62px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff8a9a,#e0253f 55%,#9c1028);box-shadow:0 0 0 6px #e9edf2,0 0 40px #ff3d5766}
+.gauge ol{list-style:none;margin:0;padding:0;position:absolute;left:72px;top:0;bottom:60px;display:flex;flex-direction:column-reverse;justify-content:space-between}
+.gauge li{font-size:12px;font-weight:600;color:var(--mute);white-space:nowrap;transition:color .3s}
+.gauge li.on{color:var(--ink)}
+.lane{margin-bottom:clamp(32px,5vw,56px);scroll-margin-top:140px}
+.lh{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;padding-bottom:14px;margin-bottom:18px;border-bottom:3px solid var(--c)}
+.lh h2{font-size:clamp(30px,4vw,46px);color:var(--c)}
+.lh p{margin:0 0 4px;color:var(--mute);font-weight:600}
+.lh .ct{margin-left:auto;font-family:var(--disp);font-size:20px}
+.cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:14px;perspective:900px}
+.card{position:relative;background:linear-gradient(165deg,var(--sf2),var(--sf));border:1px solid var(--line);border-radius:18px;padding:18px;transform-style:preserve-3d;transition:transform .18s ease-out,border-color .2s;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
+.card:hover{border-color:color-mix(in srgb,var(--c) 70%,var(--line))}
+.card.rv{animation:entra .7s cubic-bezier(.2,.9,.3,1) backwards}
+@keyframes entra{from{transform:translateY(26px) rotateX(10deg)}to{transform:none}}
+.card .hd{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start}
+.card h3{font-size:22px;line-height:1.1}
+.ar{font-size:14px;color:var(--mute);margin-top:6px}
+.ring{width:64px;height:64px;position:relative;transform:translateZ(24px)}
+.ring svg{width:64px;height:64px;transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--disp);font-size:20px}
+.ring small{position:absolute;left:0;right:0;bottom:-16px;text-align:center;font-size:11px;color:var(--mute)}
+.st{display:inline-block;margin:14px 0 10px;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:700;background:color-mix(in srgb,var(--c) 22%,transparent);color:color-mix(in srgb,var(--c) 70%,#fff)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0;font-size:14px}
+.card dt{color:var(--mute)}.card dd{margin:0;font-weight:600}
+.card details{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;font-size:14px}
+.card summary{cursor:pointer;font-weight:700;color:var(--lar);min-height:32px;display:flex;align-items:center}
+.card details p{margin:8px 0;color:#d8e0ea}
+.card details a{font-weight:700;color:var(--lar)}
+.empty{color:var(--mute);padding:18px;border:1px dashed var(--line);border-radius:14px}
+/* mudanças e publicados */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,4vw,48px)}
+.panel{background:var(--sf);border:1px solid var(--line);border-radius:20px;padding:clamp(18px,3vw,28px)}
+.panel h2{font-size:clamp(26px,3vw,34px);margin-bottom:16px}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{position:relative;padding:0 0 16px 28px}
+.tl li::before{content:"";position:absolute;left:4px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--lar);box-shadow:0 0 0 5px #ff6b1a33}
+.tl li::after{content:"";position:absolute;left:9px;top:22px;bottom:0;width:2px;background:var(--line)}
+.tl li:last-child::after{display:none}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;color:var(--mute);font-weight:600;font-size:13px;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:9px 8px;border-bottom:1px solid var(--line)}
+td:last-child,th:last-child{text-align:right;white-space:nowrap}
+.foot{background:var(--mar)}
+.foot .wrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:center}
+.foot h2{font-size:clamp(30px,4vw,48px)}
+.foot h2 b{color:var(--lar);font-weight:400}
+.foot p{color:#c8d4e2}
+.foot .cta{justify-content:flex-end}
+@media(max-width:900px){.hero .wrap{grid-template-columns:minmax(0,1fr)}.scene{height:420px}.main{grid-template-columns:minmax(0,1fr)}.gauge{display:none}.two,.foot .wrap{grid-template-columns:minmax(0,1fr)}.foot .cta{justify-content:flex-start}}
+@media(max-width:600px){.strip{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.strip button{padding:10px 6px;min-height:68px;text-align:center}.strip span{font-size:11px;overflow-wrap:anywhere;hyphens:auto}.top nav{display:none}.scene{height:360px;min-height:0}.termo3d{width:110px;height:330px}.ctl{top:59px}.chips{flex-wrap:nowrap;overflow-x:auto;width:100%;padding-bottom:2px}.chips button{flex:none}.stage{scale:.8}.b2{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+<a class="logo" href="#inicio" aria-label="VaiSairConcurso"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="#0e2a47"/><path d="M8 27a14 14 0 1 1 24 0" fill="none" stroke="#ff6b1a" stroke-width="2.5" stroke-linecap="round"/><text x="9" y="26" font-family="Archivo Black" font-size="13" fill="#f5f3ee">V</text><rect x="18.5" y="11" width="3" height="13" rx="1.5" fill="#f5f3ee"/><circle cx="20" cy="25.5" r="3" fill="#ff3d57"/><text x="24" y="26" font-family="Archivo Black" font-size="13" fill="#ff6b1a">S</text></svg>VaiSairConcurso</a>
+<nav aria-label="Seções"><a href="#termometro">Termômetro</a><a href="#mudou">O que mudou</a><a href="#publicados">Editais publicados</a></nav>
+</div></header>
+
+<section class="hero band" id="inicio"><div class="wrap">
+<div>
+<h1 id="titulo">Radar de editais</h1>
+<p class="sub">A chance de cada concurso fiscal, de controle, de tribunal, da PRF e do CNU ter edital nos próximos meses. Atualizado às 6h, 12h e 18h · última atualização <strong id="upd"></strong>.</p>
+<div class="cta"><a class="btn f" href="#termometro">Ver o termômetro</a><a class="btn" href="https://chat.whatsapp.com/EtwSKnj7Cl4KB7gjEMF85L">Alertas no WhatsApp</a></div>
+<div class="hot" id="hot"></div>
+</div>
+<div class="scene" id="scene" aria-hidden="true"><div class="stage" id="stage">
+<div class="obj paper b1" style="left:2%;top:6%;width:180px;height:240px;transform:translateZ(-80px) rotateY(24deg) rotateZ(-10deg)"><div class="edge"></div><div class="face"><svg viewBox="0 0 180 240"><text x="18" y="38" font-family="Archivo Black" font-size="22" fill="#0e2a47">EDITAL</text><text x="18" y="56" font-family="Inter" font-size="10" fill="#5b6472">de abertura nº 1</text><g fill="#cfd6df"><rect x="18" y="72" width="144" height="6" rx="3"/><rect x="18" y="86" width="120" height="6" rx="3"/><rect x="18" y="100" width="136" height="6" rx="3"/><rect x="18" y="114" width="100" height="6" rx="3"/><rect x="18" y="138" width="144" height="6" rx="3"/><rect x="18" y="152" width="128" height="6" rx="3"/><rect x="18" y="166" width="90" height="6" rx="3"/></g><g transform="rotate(-14 120 200)"><rect x="78" y="180" width="88" height="34" rx="6" fill="none" stroke="#ff3d57" stroke-width="3"/><text x="122" y="203" text-anchor="middle" font-family="Archivo Black" font-size="14" fill="#ff3d57">VAI SAIR</text></g></svg></div></div>
+<div class="obj paper b2" style="right:-4%;top:-2%;width:150px;height:185px;transform:translateZ(-60px) rotateY(-28deg) rotateZ(8deg)"><div class="edge"></div><div class="face"><svg viewBox="0 0 170 210" preserveAspectRatio="xMidYMid meet"><text x="16" y="32" font-family="Archivo Black" font-size="16" fill="#0e2a47">GABARITO</text><g font-family="Inter" font-size="10" fill="#5b6472"></g><g id="bolhas"></g></svg></div></div>
+<div class="obj paper b3" style="left:6%;bottom:4%;width:150px;height:150px;transform:translateZ(40px) rotateX(18deg) rotateZ(6deg)"><div class="edge"></div><div class="face"><svg viewBox="0 0 150 150"><rect width="150" height="42" rx="10" fill="#ff6b1a"/><text x="75" y="29" text-anchor="middle" font-family="Archivo Black" font-size="18" fill="#121826">DEZ</text><text x="75" y="112" text-anchor="middle" font-family="Archivo Black" font-size="56" fill="#0e2a47" id="diaCal">15</text></svg></div></div>
+<div class="obj b4" style="right:6%;bottom:8%;width:210px;height:40px;transform:translateZ(90px) rotateZ(-32deg)"><svg viewBox="0 0 210 40" width="210" height="40"><defs><linearGradient id="lp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd76a"/><stop offset=".5" stop-color="#ffc93c"/><stop offset="1" stop-color="#d99a10"/></linearGradient></defs><polygon points="0,20 34,6 34,34" fill="#f1d3a6"/><polygon points="0,20 12,15 12,25" fill="#333"/><rect x="34" y="6" width="140" height="28" fill="url(#lp)"/><rect x="174" y="6" width="14" height="28" fill="#c8ccd2"/><rect x="188" y="6" width="22" height="28" rx="6" fill="#ff8aa0"/></svg></div>
+<div class="termo3d"><svg viewBox="0 0 150 440"><defs><linearGradient id="vidro" x1="0" x2="1"><stop offset="0" stop-color="#cfd6df"/><stop offset=".35" stop-color="#ffffff"/><stop offset=".7" stop-color="#e5e9ef"/><stop offset="1" stop-color="#9aa4b2"/></linearGradient><linearGradient id="merc" x1="0" x2="1"><stop offset="0" stop-color="#b3132e"/><stop offset=".45" stop-color="#ff5a6e"/><stop offset="1" stop-color="#b3132e"/></linearGradient><radialGradient id="bulbo" cx=".38" cy=".35" r=".7"><stop offset="0" stop-color="#ff9aa8"/><stop offset=".5" stop-color="#ff3d57"/><stop offset="1" stop-color="#8b0a1f"/></radialGradient><clipPath id="tub"><rect x="62" y="22" width="26" height="340" rx="13"/></clipPath></defs>
+<rect x="48" y="8" width="54" height="360" rx="27" fill="url(#vidro)"/><circle cx="75" cy="380" r="52" fill="url(#vidro)"/>
+<g clip-path="url(#tub)"><rect id="hg" x="62" y="362" width="26" height="0" fill="url(#merc)"/></g>
+<circle cx="75" cy="380" r="38" fill="url(#bulbo)"/><ellipse cx="62" cy="366" rx="10" ry="14" fill="#fff" opacity=".45"/>
+<rect x="54" y="30" width="6" height="300" rx="3" fill="#fff" opacity=".7"/>
+<g id="marcas" stroke="#5b6472" stroke-width="3" stroke-linecap="round"></g>
+<g id="rot" font-family="Inter" font-weight="700" font-size="13" fill="#f5f3ee"></g></svg></div>
+</div></div>
+</div>
+<div class="wrap"><div class="strip" id="strip"></div></div>
+</section>
+
+<div class="ctl"><div class="wrap"><label for="q" class="sr" style="position:absolute;left:-9999px">Buscar</label><input id="q" type="search" placeholder="Buscar órgão, cargo ou banca"><div class="chips" id="chips"></div></div></div>
+
+<section class="band" id="termometro"><div class="wrap main">
+<aside class="gauge" aria-hidden="true"><div class="tube"></div><div class="hg" id="ghg" style="height:10%"></div><div class="bulb"></div><ol id="gl"></ol></aside>
+<div id="lanes"></div>
+</div></section>
+
+<section class="band" style="padding-top:0"><div class="wrap two">
+<div class="panel" id="mudou"><h2>O que mudou</h2><ul class="tl" id="mud"></ul></div>
+<div class="panel" id="publicados"><h2>Editais publicados</h2><div class="scroll"><table><thead><tr><th>Órgão</th><th>Banca</th><th>Quando</th></tr></thead><tbody id="pub"></tbody></table></div></div>
+</div></section>
+
+<footer class="foot band"><div class="wrap">
+<div><h2>Saiba antes <b>quem vai sair.</b></h2><p>Previsão com base em fontes públicas (diários oficiais, PNCP, portais dos órgãos e notícias confirmadas). Não é garantia de data.</p></div>
+<div class="cta"><a class="btn f" href="https://www.instagram.com/vaisairconcurso/">@vaisairconcurso</a><a class="btn" href="https://chat.whatsapp.com/EtwSKnj7Cl4KB7gjEMF85L">Grupo de alertas</a></div>
+</div></footer>
+
+<script>
+{
+const D={"atualizado": "23/11/2026 às 20h45", "faixas": [["3m", "Até 3 meses"], ["6m", "3 a 6 meses"], ["9m", "6 a 9 meses"], ["12m", "9 a 12 meses"], ["mais", "Mais de 1 ano"]], "concursos": [{"id": "receita", "orgao": "Receita Federal", "area": "Fiscal", "cargos": "Auditor-Fiscal e Analista-Tributário", "vagas": "146", "banca": "FGV (escolhida)", "etapa": "escolhida", "fonte": "oficial", "quem": "Receita Federal (Termo de Dispensa nº 9/2026 no PNCP)", "data": "2026-11-23", "prazo": "2026-12-31", "atraso": 1, "resumo": "FGV escolhida por dispensa de licitação publicada no PNCP em 23/11/2026; falta assinar o contrato. A Receita mantém a previsão de edital em dezembro, com prazo legal até 03/01/2027.", "link": "https://blog.grancursosonline.com.br/concurso-receita-federal-banca-definida-2026/", "indice": 87, "faixa": "3m", "etapa_txt": "Banca escolhida", "fonte_txt": "Documento oficial", "data_br": "23/11/2026"}, {"id": "sefaz-rs", "orgao": "Sefaz RS", "area": "Fiscal", "cargos": "Auditor-Fiscal e Analista Tributário da Receita Estadual", "vagas": "46", "banca": "FCC (contratada)", "etapa": "contratada", "fonte": "oficial", "quem": "Diário Oficial do RS / contrato nº 26/04/031", "data": "2026-11-10", "prazo": null, "atraso": 0, "resumo": "Contrato assinado em 9/11 e autorização de início de serviço emitida em 10/11. Próximo passo é o edital.", "link": "https://folha.qconcursos.com/n/concurso-sefaz-rs-banca-contratada-2026", "indice": 85, "faixa": "3m", "etapa_txt": "Banca contratada", "fonte_txt": "Documento oficial", "data_br": "10/11/2026"}, {"id": "trt-mt", "orgao": "TRT 23 (MT)", "area": "Trabalho", "cargos": "Técnico e Analista", "vagas": "CR (41 cargos vagos)", "banca": "FCC (contratada)", "etapa": "contratada", "fonte": "oficial", "quem": "Contrato nº 32/2026 no PNCP", "data": "2026-10-15", "prazo": null, "atraso": 0, "resumo": "FCC contratada em 15/10; edital é o próximo passo.", "link": "https://folha.qconcursos.com/n/concurso-trt-mt-banca-contratada-2026", "indice": 82, "faixa": "3m", "etapa_txt": "Banca contratada", "fonte_txt": "Documento oficial", "data_br": "15/10/2026"}, {"id": "sefaz-ba", "orgao": "Sefaz BA", "area": "Fiscal", "cargos": "Auditor Fiscal e Agente de Tributos Estaduais", "vagas": "200", "banca": "Cesgranrio (escolhida)", "etapa": "escolhida", "fonte": "autoridade", "quem": "Saeb, via Sindsefaz", "data": "2026-09-22", "prazo": "2026-11-30", "atraso": 1, "resumo": "Autorizado em março. Cesgranrio escolhida em 22/09. Governo indicou editais para novembro (antes, setembro/outubro).", "link": "https://folha.qconcursos.com/n/concurso-sefaz-ba-2026-banca-definida", "indice": 78, "faixa": "3m", "etapa_txt": "Banca escolhida", "fonte_txt": "Autoridade do órgão", "data_br": "22/09/2026"}, {"id": "tj-al", "orgao": "TJ AL", "area": "Justiça", "cargos": "Analista Judiciário (Contador e Oficial de Justiça)", "vagas": "A definir (117 cargos vagos)", "banca": "FCC (escolhida)", "etapa": "escolhida", "fonte": "oficial", "quem": "Presidência do TJ AL, Diário da Justiça", "data": "2026-10-27", "prazo": null, "atraso": 0, "resumo": "Contratação direta da FCC autorizada em 27/10; falta assinar o contrato.", "link": "https://folha.qconcursos.com/n/concurso-tj-al-2026-banca-definida", "indice": 75, "faixa": "3m", "etapa_txt": "Banca escolhida", "fonte_txt": "Documento oficial", "data_br": "27/10/2026"}, {"id": "sefaz-df", "orgao": "Sefaz DF", "area": "Fiscal", "cargos": "Auditor-Fiscal da Receita do DF", "vagas": "115 + 150 CR", "banca": "Cebraspe (contratada)", "etapa": "contratada", "fonte": "assessoria", "quem": "Secretaria de Economia do DF (assessoria)", "data": "2026-11-10", "prazo": null, "atraso": 2, "resumo": "Banca contratada desde out/2025. Minuta em ajustes há quase um ano; ajustes com o Cebraspe seguem até dezembro.", "link": "https://blog.grancursosonline.com.br/?p=79981504", "indice": 67, "faixa": "6m", "etapa_txt": "Banca contratada", "fonte_txt": "Assessoria do órgão", "data_br": "10/11/2026"}, {"id": "tj-pr", "orgao": "TJ PR (Contador)", "area": "Justiça", "cargos": "Contador", "vagas": "2 + CR", "banca": "Fundatec (definida)", "etapa": "escolhida", "fonte": "assessoria", "quem": "TJ PR, em resposta à imprensa", "data": "2026-11-01", "prazo": null, "atraso": 1, "resumo": "Banca definida; edital era previsto para o 2º semestre de 2026.", "link": "https://blog.grancursosonline.com.br/concursos-tribunais/amp/", "indice": 63, "faixa": "6m", "etapa_txt": "Banca escolhida", "fonte_txt": "Assessoria do órgão", "data_br": "01/11/2026"}, {"id": "tj-to", "orgao": "TJ TO", "area": "Justiça", "cargos": "Técnico e Analista", "vagas": "A definir", "banca": "Em definição", "etapa": "em_definicao", "fonte": "oficial", "quem": "Portaria nº 1848/2026", "data": "2026-07-29", "prazo": null, "atraso": 0, "resumo": "Equipe de planejamento da contratação da banca criada em junho; concurso de 2022 vale até jul/2027.", "link": "https://folha.qconcursos.com/n/concurso-tj-to-cargos-vagos", "indice": 60, "faixa": "9m", "etapa_txt": "Banca em definição", "fonte_txt": "Documento oficial", "data_br": "29/07/2026"}, {"id": "trt-ba", "orgao": "TRT 5 (BA)", "area": "Trabalho", "cargos": "A confirmar", "vagas": "CR", "banca": "A definir", "etapa": "comissao", "fonte": "oficial", "quem": "Portaria GP nº 959/2026", "data": "2026-11-06", "prazo": null, "atraso": 0, "resumo": "Comissão tem 60 dias para o projeto básico; escolha da banca deve começar até janeiro.", "link": "https://folha.qconcursos.com/n/concurso-trt-ba-2026-comissao-organizadora", "indice": 58, "faixa": "9m", "etapa_txt": "Comissão formada", "fonte_txt": "Documento oficial", "data_br": "06/11/2026"}, {"id": "trt-mg", "orgao": "TRT 3 (MG)", "area": "Trabalho", "cargos": "Analista e Técnico Judiciário", "vagas": "A definir (473 cargos vagos)", "banca": "Em definição (contratação prevista até mar/2027)", "etapa": "comissao", "fonte": "oficial", "quem": "TRT 3 (Plano de Contratações Anual)", "data": "2026-10-21", "prazo": null, "atraso": 0, "resumo": "Preparativos do concurso autorizados em 15/10/2026 e grupo de trabalho criado em 21/10. O Plano de Contratações prevê contratar a banca até março de 2027.", "link": "https://blog.grancursosonline.com.br/concurso-trt-mg/", "indice": 55, "faixa": "9m", "etapa_txt": "Comissão formada", "fonte_txt": "Documento oficial", "data_br": "21/10/2026"}, {"id": "tj-es", "orgao": "TJ ES (TI)", "area": "Justiça", "cargos": "Analista de Sistemas e Analista de Segurança da Informação", "vagas": "A definir", "banca": "A definir", "etapa": "autorizado", "fonte": "oficial", "quem": "Presidente do TJ ES (nota oficial)", "data": "2026-09-02", "prazo": null, "atraso": 0, "resumo": "Presidente autorizou concurso para TIC (desenvolvimento, IA e governança de TI). Vagas e banca a definir.", "link": "https://www.tjes.jus.br/tjes-vai-autorizar-concurso-publico-para-a-area-de-tecnologia-da-informacao/", "indice": 54, "faixa": "9m", "etapa_txt": "Autorizado", "fonte_txt": "Documento oficial", "data_br": "02/09/2026"}, {"id": "prf", "orgao": "PRF (Policial)", "area": "PRF", "cargos": "Policial Rodoviário Federal", "vagas": "Pedido de 533 (todas as áreas)", "banca": "A definir", "etapa": "pedido", "fonte": "autoridade", "quem": "Ministra Esther Dweck (MGI)", "data": "2026-11-12", "prazo": "2027-04-30", "atraso": 0, "resumo": "Ministra prevê autorização em janeiro de 2027; cenário mais rápido conclui o concurso em setembro de 2027.", "link": "https://folha.qconcursos.com/n/concurso-prf-2027-esther-dweck-preve-autorizacao", "indice": 53, "faixa": "9m", "etapa_txt": "Autorização pedida", "fonte_txt": "Autoridade do órgão", "data_br": "12/11/2026"}, {"id": "sefaz-to", "orgao": "Sefaz TO", "area": "Fiscal", "cargos": "Auditor Fiscal da Receita Estadual", "vagas": "100 + 100 CR", "banca": "A definir", "etapa": "autorizado", "fonte": "autoridade", "quem": "Governador e secretário da Fazenda", "data": "2026-11-09", "prazo": null, "atraso": 1, "resumo": "Autorizado em fev/2026, primeiro concurso desde 1993. Promessa de edital em 2026 não se cumpriu; banca ainda não escolhida.", "link": "https://blog.grancursosonline.com.br/concurso-sefaz-to/amp/", "indice": 51, "faixa": "9m", "etapa_txt": "Autorizado", "fonte_txt": "Autoridade do órgão", "data_br": "09/11/2026"}, {"id": "iss-goiania", "orgao": "ISS Goiânia", "area": "Fiscal", "cargos": "Auditor de Tributos", "vagas": "43 + 100 CR", "banca": "Em definição", "etapa": "em_definicao", "fonte": "autoridade", "quem": "Secretário de Finanças de Goiânia", "data": "2026-08-15", "prazo": null, "atraso": 1, "resumo": "Contratação da banca iniciada em agosto; corte de gastos da prefeitura pode atrasar.", "link": "https://blog.grancursosonline.com.br/concurso-iss-goiania/amp/", "indice": 50, "faixa": "9m", "etapa_txt": "Banca em definição", "fonte_txt": "Autoridade do órgão", "data_br": "15/08/2026"}, {"id": "tce-se", "orgao": "TCE SE", "area": "Controle", "cargos": "Auditor de Controle Externo I e II", "vagas": "20 + CR", "banca": "A definir", "etapa": "estudo", "fonte": "oficial", "quem": "Relatório de impacto do TCE SE", "data": "2026-10-29", "prazo": null, "atraso": 0, "resumo": "Estudo de viabilidade concluído; faltam comissão e banca. Último edital em 2015.", "link": "https://folha.qconcursos.com/n/concurso-tce-se-2026-estudo-20-vagas-auditor", "indice": 48, "faixa": "12m", "etapa_txt": "Em estudo", "fonte_txt": "Documento oficial", "data_br": "29/10/2026"}, {"id": "tce-rj", "orgao": "TCE RJ", "area": "Controle", "cargos": "Auditor de Controle Externo", "vagas": "40 autorizadas", "banca": "A definir (contrato com IBFC rescindido)", "etapa": "autorizado", "fonte": "oficial", "quem": "Conselho Superior de Administração do TCE RJ", "data": "2026-10-14", "prazo": "2027-06-30", "atraso": 2, "resumo": "Autorizado em 2023; escolha de banca reiniciada após distrato. Verba incluída no orçamento de 2027.", "link": "https://folha.qconcursos.com/n/concurso-tce-rj-orcamento-para-2027", "indice": 48, "faixa": "12m", "etapa_txt": "Autorizado", "fonte_txt": "Documento oficial", "data_br": "14/10/2026"}, {"id": "tj-go", "orgao": "TJ GO", "area": "Justiça", "cargos": "Analista Judiciário", "vagas": "A definir", "banca": "Contratação prevista para 2027", "etapa": "estudo", "fonte": "oficial", "quem": "Plano de Contratações Anual do TJ GO", "data": "2026-09-17", "prazo": "2027-06-30", "atraso": 0, "resumo": "PCA prevê a escolha da banca em 2027.", "link": "https://folha.qconcursos.com/n/concurso-tj-go-contratacao-da-banca-em-2027", "indice": 48, "faixa": "12m", "etapa_txt": "Em estudo", "fonte_txt": "Documento oficial", "data_br": "17/09/2026"}, {"id": "tcu", "orgao": "TCU", "area": "Controle", "cargos": "Auditor Federal de Controle Externo", "vagas": "~100 anunciadas (43 provimentos no PLOA)", "banca": "A definir", "etapa": "anunciado", "fonte": "autoridade", "quem": "Presidência e vice-presidência do TCU", "data": "2026-11-19", "prazo": "2027-06-30", "atraso": 0, "resumo": "PLOA 2027 prevê novo concurso de auditor; vice-presidente cogita edital exclusivo para mulheres.", "link": "https://folha.qconcursos.com/n/concurso-tcu-proposta-edital-para-mulheres", "indice": 47, "faixa": "12m", "etapa_txt": "Anunciado", "fonte_txt": "Autoridade do órgão", "data_br": "19/11/2026"}, {"id": "cnu3", "orgao": "CNU 3 (Concurso Nacional Unificado)", "area": "CNU", "cargos": "Diversos cargos federais, por blocos temáticos", "vagas": "2 a 3 mil previstas", "banca": "A definir", "etapa": "anunciado", "fonte": "autoridade", "quem": "Ministra Esther Dweck (MGI) e presidente da Enap", "data": "2026-11-12", "prazo": "2027-09-30", "atraso": 0, "resumo": "Planejamento iniciado pela Enap; edital previsto para o 2º semestre de 2027. Vagas dependem da aprovação do Orçamento de 2027 e não há autorização formal nem banca.", "link": "https://www.novaconcursos.com.br/portal/?p=317805", "indice": 47, "faixa": "12m", "etapa_txt": "Anunciado", "fonte_txt": "Autoridade do órgão", "data_br": "12/11/2026"}, {"id": "tce-ba", "orgao": "TCE BA", "area": "Controle", "cargos": "Auditor (Conselheiro Substituto)", "vagas": "A definir", "banca": "A definir", "etapa": "comissao", "fonte": "oficial", "quem": "Ato nº 115/2026 do TCE BA", "data": "2026-03-26", "prazo": null, "atraso": 0, "resumo": "Comissão formada em março, com verba no orçamento de 2026. Sem notícia de banca desde então.", "link": "https://folha.qconcursos.com/n/concurso-tce-ba-2026-comissao-formada", "indice": 45, "faixa": "12m", "etapa_txt": "Comissão formada", "fonte_txt": "Documento oficial", "data_br": "26/03/2026"}, {"id": "tj-rs", "orgao": "TJ RS", "area": "Justiça", "cargos": "Analista (Apoio Especializado)", "vagas": "A definir", "banca": "A definir", "etapa": "comissao", "fonte": "oficial", "quem": "Portaria do TJ RS", "data": "2025-12-19", "prazo": null, "atraso": 0, "resumo": "Comissão formada em dez/2025, sem avanço público desde então.", "link": "https://blog.grancursosonline.com.br/concursos-tribunais/", "indice": 45, "faixa": "12m", "etapa_txt": "Comissão formada", "fonte_txt": "Documento oficial", "data_br": "19/12/2025"}, {"id": "tjdft", "orgao": "TJDFT", "area": "Justiça", "cargos": "Técnico e Analista", "vagas": "A definir", "banca": "A definir", "etapa": "orcamento", "fonte": "oficial", "quem": "PLOA 2027", "data": "2026-09-20", "prazo": "2027-06-30", "atraso": 0, "resumo": "Projeto de orçamento de 2027 prevê seleção de servidores.", "link": "https://www.novaconcursos.com.br/portal/?p=316029", "indice": 43, "faixa": "12m", "etapa_txt": "Previsto no orçamento", "fonte_txt": "Documento oficial", "data_br": "20/09/2026"}, {"id": "trf5", "orgao": "TRF 5", "area": "Justiça", "cargos": "Técnico e Analista", "vagas": "A definir", "banca": "A definir", "etapa": "orcamento", "fonte": "oficial", "quem": "PLOA 2027", "data": "2026-09-21", "prazo": "2027-06-30", "atraso": 0, "resumo": "PLOA prevê concurso geral em 2027, com periodicidade bienal.", "link": "https://folha.qconcursos.com/n/concurso-trf5-ploa-2027-preve-novos-editais", "indice": 43, "faixa": "12m", "etapa_txt": "Previsto no orçamento", "fonte_txt": "Documento oficial", "data_br": "21/09/2026"}, {"id": "prf-adm", "orgao": "PRF (Administrativo)", "area": "PRF", "cargos": "Agente Administrativo", "vagas": "264 pedidas", "banca": "A definir", "etapa": "pedido", "fonte": "oficial", "quem": "Pedido da PRF ao MGI", "data": "2026-11-18", "prazo": null, "atraso": 1, "resumo": "Cronograma da PRF previa edital em nov/2026, mas a autorização não saiu.", "link": "https://folha.qconcursos.com/n/concurso-prf-administrativo-ministra-fala-sobre-edital-em-2027", "indice": 43, "faixa": "12m", "etapa_txt": "Autorização pedida", "fonte_txt": "Documento oficial", "data_br": "18/11/2026"}, {"id": "trfs", "orgao": "TRF 1, 2, 4 e 6", "area": "Justiça", "cargos": "Técnico e Analista", "vagas": "A definir", "banca": "A definir", "etapa": "orcamento", "fonte": "oficial", "quem": "Projeções do PLOA", "data": "2026-09-20", "prazo": "2028-06-30", "atraso": 0, "resumo": "Projeções orçamentárias apontam editais entre 2027 e 2030.", "link": "https://blog.grancursosonline.com.br/concursos-tribunais/", "indice": 38, "faixa": "mais", "etapa_txt": "Previsto no orçamento", "fonte_txt": "Documento oficial", "data_br": "20/09/2026"}, {"id": "stj", "orgao": "STJ", "area": "Justiça", "cargos": "Técnico e Analista", "vagas": "A definir", "banca": "A definir", "etapa": "orcamento", "fonte": "oficial", "quem": "PLOA 2027", "data": "2026-09-24", "prazo": "2029-06-30", "atraso": 0, "resumo": "Concurso vigente; PLOA indica novo edital em 2029.", "link": "https://folha.qconcursos.com/n/concurso-stj-edital-previsao-2029-ploa", "indice": 38, "faixa": "mais", "etapa_txt": "Previsto no orçamento", "fonte_txt": "Documento oficial", "data_br": "24/09/2026"}, {"id": "sefaz-rr", "orgao": "Sefaz RR", "area": "Fiscal", "cargos": "Auditor Fiscal", "vagas": "A definir", "banca": "A definir", "etapa": "anunciado", "fonte": "autoridade", "quem": "Governo de Roraima", "data": "2026-09-01", "prazo": null, "atraso": 0, "resumo": "Executivo fala em autorização “em breve”, sem ato publicado.", "link": "https://concursos.estrategia.com/portal/concursos-fiscais/", "indice": 37, "faixa": "mais", "etapa_txt": "Anunciado", "fonte_txt": "Autoridade do órgão", "data_br": "01/09/2026"}, {"id": "tce-pi", "orgao": "TCE PI", "area": "Controle", "cargos": "A definir", "vagas": "A definir", "banca": "A definir", "etapa": "orcamento", "fonte": "oficial", "quem": "PLOA 2026 do Piauí", "data": "2026-06-01", "prazo": null, "atraso": 0, "resumo": "Citado no orçamento, sem outros atos.", "link": "https://blog.grancursosonline.com.br/concursos-controle/", "indice": 37, "faixa": "mais", "etapa_txt": "Previsto no orçamento", "fonte_txt": "Documento oficial", "data_br": "01/06/2026"}, {"id": "tcm-ba", "orgao": "TCM BA", "area": "Controle", "cargos": "Auditor Estadual de Controle Externo", "vagas": "22", "banca": "A definir", "etapa": "orcamento", "fonte": "oficial", "quem": "PLOA 2026 da Bahia", "data": "2026-06-01", "prazo": null, "atraso": 0, "resumo": "Previsto no orçamento, sem comissão.", "link": "https://blog.grancursosonline.com.br/concursos-controle/", "indice": 37, "faixa": "mais", "etapa_txt": "Previsto no orçamento", "fonte_txt": "Documento oficial", "data_br": "01/06/2026"}, {"id": "cge-rn", "orgao": "CGE RN", "area": "Controle", "cargos": "A definir", "vagas": "A definir", "banca": "A definir", "etapa": "orcamento", "fonte": "oficial", "quem": "PLDO do RN", "data": "2026-06-01", "prazo": null, "atraso": 0, "resumo": "Previsto na lei de diretrizes, sem outros atos.", "link": "https://blog.grancursosonline.com.br/concursos-controle/", "indice": 37, "faixa": "mais", "etapa_txt": "Previsto no orçamento", "fonte_txt": "Documento oficial", "data_br": "01/06/2026"}, {"id": "sefaz-es", "orgao": "Sefaz ES", "area": "Fiscal", "cargos": "Auditor Fiscal da Receita Estadual", "vagas": "40 previstas", "banca": "A definir", "etapa": "orcamento", "fonte": "oficial", "quem": "LOA 2026 do Espírito Santo", "data": "2026-02-01", "prazo": null, "atraso": 0, "resumo": "Previsto no orçamento estadual de 2026, sem comissão ou banca até agora.", "link": "https://concursos.estrategia.com/portal/concursos-fiscais/", "indice": 34, "faixa": "mais", "etapa_txt": "Previsto no orçamento", "fonte_txt": "Documento oficial", "data_br": "01/02/2026"}, {"id": "stf", "orgao": "STF", "area": "Justiça", "cargos": "Técnico e Analista", "vagas": "A definir", "banca": "A definir", "etapa": "orcamento", "fonte": "oficial", "quem": "PLC 769/2024 e LOA", "data": "2026-02-01", "prazo": null, "atraso": 0, "resumo": "Depende da criação de 200 cargos em projeto de lei.", "link": "https://blog.grancursosonline.com.br/concursos-tribunais-loa-federal-2026/", "indice": 34, "faixa": "mais", "etapa_txt": "Previsto no orçamento", "fonte_txt": "Documento oficial", "data_br": "01/02/2026"}, {"id": "tse-tres", "orgao": "TSE e TREs (unificado)", "area": "Eleitoral", "cargos": "Técnico e Analista", "vagas": "—", "banca": "—", "etapa": "sem_movimento", "fonte": "oficial", "quem": "TSE", "data": "2026-07-01", "prazo": null, "atraso": 0, "resumo": "Concurso unificado de 2024 vale até jul/2027. Nenhum TRE tem novo edital em preparação.", "link": "https://www.estrategiaconcursos.com.br/blog/concursos-tre/", "indice": 32, "faixa": "mais", "etapa_txt": "Sem movimento", "fonte_txt": "Documento oficial", "data_br": "01/07/2026"}, {"id": "tj-am", "orgao": "TJ AM", "area": "Justiça", "cargos": "Assistente e Analista Judiciário", "vagas": "~400 anunciadas", "banca": "A definir", "etapa": "anunciado", "fonte": "autoridade", "quem": "Presidência do TJ AM", "data": "2026-05-15", "prazo": null, "atraso": 0, "resumo": "Anunciado em maio, sem comissão publicada.", "link": "https://blog.grancursosonline.com.br/concursos-tribunais/", "indice": 31, "faixa": "mais", "etapa_txt": "Anunciado", "fonte_txt": "Autoridade do órgão", "data_br": "15/05/2026"}, {"id": "sefaz-mg", "orgao": "Sefaz MG", "area": "Fiscal", "cargos": "Auditor Fiscal", "vagas": "50 a 250", "banca": "A definir", "etapa": "estudo", "fonte": "nao_oficial", "quem": "Imprensa especializada", "data": "2026-10-01", "prazo": null, "atraso": 0, "resumo": "Concurso de 2023 vigente até set/2027; decisão sobre novo edital só em 2027.", "link": "https://concursos.estrategia.com/portal/concursos-fiscais/", "indice": 30, "faixa": "mais", "etapa_txt": "Em estudo", "fonte_txt": "Não oficial", "data_br": "01/10/2026"}, {"id": "sefin-ro", "orgao": "Sefin RO", "area": "Fiscal", "cargos": "Auditor Fiscal", "vagas": "A definir", "banca": "A definir", "etapa": "orcamento", "fonte": "sindicato", "quem": "Presidente do sindicato", "data": "2026-09-01", "prazo": null, "atraso": 0, "resumo": "Servidor designado para o plano de trabalho; previsão vem do sindicato.", "link": "https://blog.grancursosonline.com.br/concursos-fiscais/", "indice": 30, "faixa": "mais", "etapa_txt": "Previsto no orçamento", "fonte_txt": "Sindicato", "data_br": "01/09/2026"}, {"id": "tst", "orgao": "TST", "area": "Justiça", "cargos": "Técnico e Analista", "vagas": "A definir", "banca": "A definir", "etapa": "estudo", "fonte": "nao_oficial", "quem": "Documentos internos citados pela imprensa", "data": "2026-06-01", "prazo": null, "atraso": 0, "resumo": "Estudos desde 2024; comissão em formação.", "link": "https://folha.qconcursos.com/n/concursos-tribunais", "indice": 28, "faixa": "mais", "etapa_txt": "Em estudo", "fonte_txt": "Não oficial", "data_br": "01/06/2026"}, {"id": "trt-pr", "orgao": "TRT 9 (PR)", "area": "Trabalho", "cargos": "A definir", "vagas": "A definir", "banca": "A definir", "etapa": "estudo", "fonte": "nao_oficial", "quem": "Imprensa especializada", "data": "2026-07-15", "prazo": null, "atraso": 0, "resumo": "Em análise; o portal do tribunal não confirma comissão.", "link": "https://noticias.focusconcursos.com.br/noticias/concursos-trt-2026-veja-os-tribunais-que-preparam-novos-editais", "indice": 28, "faixa": "mais", "etapa_txt": "Em estudo", "fonte_txt": "Não oficial", "data_br": "15/07/2026"}], "mudancas": ["Receita Federal escolheu a FGV por dispensa de licitação publicada no PNCP (23/11); falta assinar o contrato.", "TRT 3 (MG) entrou no radar: concurso de analista e técnico autorizado em outubro, com banca prevista até março de 2027."], "publicados": [{"orgao": "Sefaz SC", "banca": "FCC", "quando": "set/2026"}, {"orgao": "Sefaz AL", "banca": "Cebraspe", "quando": "ago/2026"}, {"orgao": "Sefaz CE", "banca": "FCC", "quando": "abr/2026"}, {"orgao": "Sefaz GO (republicado)", "banca": "FCC", "quando": "dez/2025"}, {"orgao": "TCE SP", "banca": "Vunesp", "quando": "jul/2026"}, {"orgao": "TCE MA", "banca": "Cebraspe", "quando": "jul/2026"}, {"orgao": "TCE GO", "banca": "FCC", "quando": "out/2026"}, {"orgao": "TCDF", "banca": "Cebraspe", "quando": "ago/2026"}, {"orgao": "CGU", "banca": "Cebraspe", "quando": "out/2026"}, {"orgao": "TRT 8 (PA/AP)", "banca": "FCC", "quando": "out/2026"}, {"orgao": "TRT 4 (RS)", "banca": "FCC", "quando": "out/2026"}, {"orgao": "TJ SP (Escrevente e Oficial)", "banca": "Vunesp", "quando": "out/2026"}, {"orgao": "TJ PB", "banca": "FGV", "quando": "out/2026"}, {"orgao": "TRF 3", "banca": "—", "quando": "nov/2026"}]};
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const safe=u=>/^https:\/\//.test(u||"")?esc(u):"#";
+const FX={"3m":["Quente","sai em até 3 meses","--c4",.9],"6m":["Esquentando","sai em 3 a 6 meses","--c3",.7],"9m":["Morno","sai em 6 a 9 meses","--c2",.52],"12m":["Frio","sai em 9 a 12 meses","--c1",.34],"mais":["Gelado","mais de 1 ano","--c0",.16]};
+const ORD=["3m","6m","9m","12m","mais"];
+let area="Todas",faixa=null,q="";
+document.getElementById("upd").textContent=D.atualizado;
+const quentes=D.concursos.filter(c=>c.faixa==="3m");
+const n=quentes.length;
+document.getElementById("titulo").innerHTML=n?`<b>${n} concurso${n>1?"s":""}</b> pode${n>1?"m":""} ter edital em até 3 meses`:"Nenhum concurso na faixa de até 3 meses agora";
+const top1=[...D.concursos].sort((a,b)=>b.indice-a.indice)[0];
+if(top1)document.getElementById("hot").innerHTML=`<span class="n">${top1.indice}</span><div><small>Mais quente agora</small><strong>${esc(top1.orgao)}</strong><small>${esc(top1.etapa_txt)} · ${esc(top1.banca)}</small></div>`;
+/* termômetro grande */
+const hg=document.getElementById("hg"),mk=document.getElementById("marcas"),rt=document.getElementById("rot");
+let m="",r="";ORD.forEach((k,i)=>{const y=362-(4-i+.5)*68;m+=`<line x1="104" y1="${y}" x2="118" y2="${y}"/>`;r+=`<text x="124" y="${y+4}" fill="var(${FX[k][2]})">${FX[k][0]}</text>`});
+mk.innerHTML=m;rt.innerHTML=r;
+const alvo=Math.max(.12,(top1?top1.indice:50)/100);
+let t0=null;const sobe=t=>{t0??=t;const p=Math.min(1,(t-t0)/1600),e=1-Math.pow(1-p,3),h=340*alvo*e;hg.setAttribute("y",362-h);hg.setAttribute("height",h+14);if(p<1)requestAnimationFrame(sobe)};
+matchMedia("(prefers-reduced-motion: reduce)").matches?sobe(1e9):requestAnimationFrame(sobe);
+const bl=document.getElementById("bolhas");let bh="";for(let i=0;i<6;i++){bh+=`<text x="16" y="${62+i*24}" font-family="Inter" font-size="11" fill="#5b6472">${i+1}</text>`;for(let j=0;j<5;j++){const on=(i*3+j*2)%5===0;bh+=`<circle cx="${42+j*24}" cy="${58+i*24}" r="8" fill="${on?"#0e2a47":"none"}" stroke="#0e2a47" stroke-width="1.6"/>`}}bl.innerHTML=bh;
+/* cena com mouse e rolagem */
+const stage=document.getElementById("stage"),scene=document.getElementById("scene");
+let mx=0,my=0,sy=0;const pose=()=>{stage.style.transform=`rotateY(${mx*10}deg) rotateX(${-my*8+sy*6}deg) translateY(${sy*-40}px)`};
+scene.addEventListener("pointermove",e=>{const b=scene.getBoundingClientRect();mx=(e.clientX-b.left)/b.width-.5;my=(e.clientY-b.top)/b.height-.5;pose()});
+scene.addEventListener("pointerleave",()=>{mx=my=0;pose()});
+addEventListener("scroll",()=>{sy=Math.min(1,scrollY/600);pose()},{passive:true});
+/* filtros */
+const areas=["Todas",...new Set(D.concursos.map(c=>c.area))];
+const chips=document.getElementById("chips");
+const strip=document.getElementById("strip");
+const ring=c=>{const R=27,L=2*Math.PI*R,v=c.indice/100;return `<div class="ring"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="${R}" fill="none" stroke="#24304a" stroke-width="7"/><circle cx="32" cy="32" r="${R}" fill="none" stroke="var(--c)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${L*v} ${L}"/></svg><b>${c.indice}</b><small>nota</small></div>`};
+const card=c=>`<li class="card" style="--c:var(${FX[c.faixa][2]})"><div class="hd"><div><h3>${esc(c.orgao)}</h3><div class="ar">${esc(c.area)} · ${esc(c.cargos)}</div></div>${ring(c)}</div>
+<span class="st">${esc(c.etapa_txt)}</span><dl><dt>Banca</dt><dd>${esc(c.banca)}</dd><dt>Vagas</dt><dd>${esc(c.vagas)}</dd><dt>Última notícia</dt><dd>${esc(c.data_br)}</dd></dl>
+<details><summary>Por que está nesta faixa</summary><p>${esc(c.resumo)}</p><p><small>Informado por: ${esc(c.quem)} (${esc(String(c.fonte_txt).toLowerCase())})</small></p><a href="${safe(c.link)}" rel="noopener">Ver fonte</a></details></li>`;
+const ver=()=>{const base=D.concursos.filter(c=>(area==="Todas"||c.area===area)&&(!q||[c.orgao,c.cargos,c.banca].join(" ").toLowerCase().includes(q)));
+chips.innerHTML=areas.map(a=>`<button type="button" data-a="${esc(a)}" aria-pressed="${a===area}">${esc(a)}</button>`).join("");
+strip.innerHTML=ORD.map(k=>`<button type="button" data-f="${k}" aria-pressed="${faixa===k}" style="--c:var(${FX[k][2]})"><b>${base.filter(c=>c.faixa===k).length}</b><span>${FX[k][0]}</span></button>`).join("");
+document.getElementById("lanes").innerHTML=ORD.filter(k=>!faixa||faixa===k).map(k=>{const l=base.filter(c=>c.faixa===k);
+return `<section class="lane" id="f-${k}" data-k="${k}" style="--c:var(${FX[k][2]})"><div class="lh"><h2>${FX[k][0]}</h2><p>${FX[k][1]}</p><span class="ct">${l.length}</span></div>${l.length?`<ul class="cards">${l.map(card).join("")}</ul>`:`<p class="empty">Nenhum concurso nesta faixa com o filtro atual.</p>`}</section>`}).join("");
+observa()};
+chips.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;area=b.dataset.a;ver()});
+strip.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;faixa=faixa===b.dataset.f?null:b.dataset.f;ver();document.getElementById("termometro").scrollIntoView()});
+document.getElementById("q").addEventListener("input",e=>{q=e.target.value.trim().toLowerCase();ver()});
+/* medidor lateral acompanha a faixa na tela */
+const gl=document.getElementById("gl"),ghg=document.getElementById("ghg");
+gl.innerHTML=ORD.slice().reverse().map(k=>`<li data-k="${k}">${FX[k][0]}</li>`).join("");
+const marca=k=>{ghg.style.height=`calc(${FX[k][3]*100}% - ${FX[k][3]*60}px)`;ghg.style.background=`linear-gradient(90deg,color-mix(in srgb,var(${FX[k][2]}) 70%,#000),var(${FX[k][2]}) 50%,color-mix(in srgb,var(${FX[k][2]}) 70%,#000))`;gl.querySelectorAll("li").forEach(li=>li.classList.toggle("on",li.dataset.k===k))};
+let io=null,ic=null;
+const observa=()=>{io?.disconnect();ic?.disconnect();
+io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting)marca(en.target.dataset.k)})},{rootMargin:"-45% 0px -50% 0px"});
+document.querySelectorAll(".lane").forEach(s=>io.observe(s));
+ic=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){en.target.classList.add("rv");ic.unobserve(en.target)}})},{threshold:.15});
+document.querySelectorAll(".card").forEach(c=>ic.observe(c))};
+/* cartões inclinam com o ponteiro */
+const lanes=document.getElementById("lanes");
+lanes.addEventListener("pointermove",e=>{const c=e.target.closest(".card");if(!c||e.pointerType!=="mouse")return;const b=c.getBoundingClientRect();c.style.setProperty("--ry",((e.clientX-b.left)/b.width-.5)*10+"deg");c.style.setProperty("--rx",-((e.clientY-b.top)/b.height-.5)*10+"deg")});
+lanes.addEventListener("pointerout",e=>{const c=e.target.closest(".card");if(c&&!c.contains(e.relatedTarget)){c.style.setProperty("--rx","0deg");c.style.setProperty("--ry","0deg")}});
+document.getElementById("mud").innerHTML=(D.mudancas||[]).map(x=>`<li>${esc(x)}</li>`).join("")||"<li>Sem movimentações desde a última atualização.</li>";
+document.getElementById("pub").innerHTML=(D.publicados||[]).map(p=>`<tr><td>${esc(p.orgao)}</td><td>${esc(p.banca)}</td><td>${esc(p.quando)}</td></tr>`).join("");
+ver();marca("3m");
+}
+</script>
+</body>
+</html>
